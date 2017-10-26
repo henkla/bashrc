@@ -232,6 +232,21 @@ get_dte()
 #	#stat -c %y "$f" | cut -d ' ' -f 1,2 | cut -d '.' -f1
 #}
 
+backup()
+{
+    START_DIR=$(pwd)
+    DATE_NOW=$(date +"%Y-%m-%d")
+    GIT_REPO=$HOME/Dokument/Projekt/bashrc
+
+    command sudo cp $HOME/.bashrc $HOME/.bash_aliases $HOME/.bash_functions $HOME/.bash_prompt $GIT_REPO
+    command cd $GIT_REPO
+    command git add .
+    command git commit -m "Backup: $DATE_NOW"
+    command git push origin master
+    command cd $START_DIR
+}
+
+
 #backup() {
 #
 #	dir=$(pwd)				  # remember the initial directory
