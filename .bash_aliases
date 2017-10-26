@@ -52,6 +52,5 @@ alias rpi='ssh hela@helaweb.se' # don't bother - password logins turned off and 
 ################
 alias svd='clear; echo "# TOP 15 HEADLINES FROM SVD.SE :"; echo "================================="; wget --output-document - --quiet svd.se | grep "h2 class=\"Teaser-heading" | cut -d ">" -f2 | cut -d "<" -f1 | head -n30 | sort -u | uniq' 
 alias update='sudo apt update && sudo apt upgrade -y'
-alias desk="wmctrl -k on"
 alias ff="new pcmanfm $DIR"
 alias ss="scrot -d 3 -c"
