@@ -54,3 +54,4 @@ alias svd='clear; echo "# TOP 15 HEADLINES FROM SVD.SE :"; echo "===============
 alias update='sudo apt update && sudo apt upgrade -y'
 alias ff="new pcmanfm $DIR"
 alias ss="scrot -d 3 -c"
+alias neo="neofetch --color_blocks off"
