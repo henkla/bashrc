@@ -244,7 +244,7 @@ backup()
         MESSAGE=$1
     fi
 
-    command sudo cp $HOME/.bashrc $HOME/.bash_aliases $HOME/.bash_functions $HOME/.bash_prompt $GIT_REPO
+    command sudo cp $HOME/.bashrc $HOME/.bash_aliases $HOME/.bash_functions $HOME/.bash_prompt $HOME/.config/compton.conf $GIT_REPO
     command cd $GIT_REPO
     command git add .
     command git commit -m "$MESSAGE $DATE_NOW"
