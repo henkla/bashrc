@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#  █████╗ ██╗     ██╗ █████╗ ███████╗███████╗███████╗
+# ██╔══██╗██║     ██║██╔══██╗██╔════╝██╔════╝██╔════╝
+# ███████║██║     ██║███████║███████╗█████╗  ███████╗
+# ██╔══██║██║     ██║██╔══██║╚════██║██╔══╝  ╚════██║
+# ██║  ██║███████╗██║██║  ██║███████║███████╗███████║
+# ╚═╝  ╚═╝╚══════╝╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
+
+
+#enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
+  alias grep='grep --color=auto'
+fi
+
+
+# ls
+alias ll='ls -l'
+alias la='ls -A'
+alias lla='ls -l -A'
+alias l='ls -CF'
+
+
+# cd 
+alias cd..='cd ..'
+alias ..='cd..'
+alias 1='clear;cd /'
+alias 2='clear;cd $HOME' 
+alias 3='clear;cd $HOME/Skrivbord'
+alias 4='clear;cd $HOME/Hämtningar'
+alias 5='clear; cd $HOME/Utveckling/Repositories'
+
+
+# system
+alias c='clear'
+alias qq='exit'
+alias r='source $HOME/.bashrc'
+alias rm='rm -i'
+
+
+# apt
+alias update='sudo apt update && apt list --upgradable'
+alias upgrade='sudo apt update && sudo apt upgrade'
+alias install='sudo apt install'
+alias show='apt show -a'
+alias search='apt search'
+alias mm='wmctrl -k on'
+
+
+# custom
+alias clean=clean.sh
+alias backup=backup_bash_config
+alias sources='sudo $TERM_EDITOR /etc/apt/sources.list'
+alias neofetch='clear;neofetch'
+alias svd='clear; echo "# TOP 15 HEADLINES FROM SVD.SE :"; echo "================================="; wget --output-document - --quiet svd.se | grep "h2 class=\"Teaser-heading" | cut -d ">" -f2 | cut -d "<" -f1 | head -n30 | sort -u | uniq | lolcat'
+
+
+# helpers
+alias globals='$print_globals | lolcat'
+alias tmux-conf='cat $HOME/.tmux.conf | lolcat'
+
+
+# uncategorized

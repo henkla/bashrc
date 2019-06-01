@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+# ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
+# ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
+# █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗
+# ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║
+# ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
+# ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+
+# launch whatever program in a new tmux window
+function new() {
+  if (( "$#" == 1 )); then	
+    command tmux new-window -n ${1^^} $1
+    command tmux last-window
+  else
+    command tmux new-window -n 'BASH'
+    command tmux last-window
+  fi
+}
+
+
+function info {
+
+  echo "Hostname: $(hostname)"
+  echo "User: $(whoami)" 
+  echo "Internal IP: $(hostname -I)" 
+  echo "External IP: $(curl icanhazip.com)"
+}
+
+
+function backup_bash_config() {
+
+  target=$REPOSITORIES/bashrc
+  branch="debx270"
+  date=$(date +%Y-%m-%d)
+
+  if [ -z "$target" ]; then
+  
+    echo "Exception: $target doesn't exist. Aborting."
+    return 1
+  
+  else
+    
+    cd $target
+    git checkout $branch
+
+    cp $HOME/.bashrc $target/
+    cp $HOME/.bash $target/ -r
+    
+    git add .
+    git commit -m "${date} - Backing up bash configuration"
+    git push
+
+    cd -
+
+  fi
+}
+
+
+function cd () {
+  
+  if [ -n "$1" ]; then
+    builtin cd "$@" && ls -CF
+  else
+    builtin cd ~ && ls -CF
+  fi
+}
+
+
+function print_globals() {
+
+  echo "workdir: $workdir"
+  echo "TERM_EDITOR: $TERM_EDITOR"
+  echo "TEXT_EDITOR: $TEXT_EDITOR"
+  echo "CODE_EDITOR: $CODE_EDITOR"
+}
+
+
+function edit() {
+
+  local arg=$1
+
+  # only operate when arguments are given
+  if [ -z "$arg" ]; then
+    echo "Exception: this function needs an argument. Valid arguments are:"
+    echo "- all"
+    echo "- bash|bashrc"
+    for dependency in "${dependencies[@]}"; do
+      echo "- $dependency"
+    done
+    return 1
+  fi
+
+  # set initial target
+  local target=$workdir/$arg
+
+  # opening all dependencies must be handled by itself
+  if [ $arg == "all" ]; then
+
+    all=()
+    for d in "${dependencies[@]}"; do
+      all+=($workdir/$d)
+    done
+
+    $TEXT_EDITOR "${all[@]}" $HOME/.bashrc
+    return 0
+  fi
+
+  # transform argument "bash" into "bashrc"
+  if [ $arg == "bash" ]; then
+    arg="bashrc"
+  fi
+
+  # bashrc was the target -> transform the target to point at this
+  if [ $arg == "bashrc" ]; then
+    target="$workdir/../.$arg"
+  fi
+
+  # check if the target actually exists (it should!)
+  if [ -f "$target" ]; then
+	  $TERM_EDITOR $target
+  else
+    echo "Exception: dependency file ($target) not found."
+    return 1
+  fi
+    
+  return 0
+}
+
+
+function parse_current_dir() {
+
+	dir=/home/
+	depth=$(pwd | grep -o "/" | wc -l)
+	let field="($depth+1)"
+
+	if (( $depth < 3 )); then
+
+		if [[ $(pwd) == "/home/$(whoami)" ]]; then
+
+			printf "~"
+			return 0
+
+		else
+
+			printf "$(pwd)"
+			return 0
+
+		fi
+
+	elif (( $depth > 2 )); then
+
+		if [[ $(pwd | cut -d "/" -f3) == $(whoami) ]]; then
+			if [[ $(pwd | cut -d "/" -f2) == "home" ]]; then
+
+				if (( $depth == 3 )); then
+        	                	dir_right=$(pwd | cut -d "/" -f$field)
+               		         	printf "~/$dir_right"
+					return 0
+
+				else
+
+					dir_right=$(pwd | cut -d "/" -f$field)
+                               		 printf "~/../$dir_right"                                                                                                          
+                               	 	return 0
+				fi
+			fi
+		else
+
+			dir_left=$(pwd | cut -d "/" -f2)
+			dir_right=$(pwd | cut -d "/" -f$field)
+			printf "/$dir_left/../$dir_right"
+			return 0
+		fi
+	fi
+
+	return 1
+}
+
+function lolcat_prompt() {
+    # Make a RAINBOW COLORED bash prompt
+    # Requires lolcat and python
+
+    # Make a persistent, incrementing seed to make a smooth rainbow effect from line to line
+    if [ -z ${LOLCAT_SEED+x} ]; then LOLCAT_SEED=1; else let "LOLCAT_SEED += 1"; fi
+    
+    # Create the PS1 string
+    PS1=$(echo $(parse_current_dir) \$)
+    # Colorize it
+    # lolcat -f forces escape sequences even when lolcat doesn't think they'd matter
+    # lolcat -F changes the frequency of the rainbow
+    PS1=$(echo "$PS1" | lolcat -f -F 0.4 -S $LOLCAT_SEED 2>/dev/null)
+    # Strip the "reset colors to normal" commands
+    PS1=$(echo "$PS1" | sed $'s/\033\[0m//g')
+    # Replace escape sequences with [escaped escape sequences]
+    # e.g.: \[\033[38;5;39m\]
+    PS1=$(echo "$PS1" | sed -r $'s/\033''(\[[0-9]+;[0-9]+;[0-9]+m)/\\\[\\033\1\\\]/g')
+
+    # change the color back to white and add the $/# PS1 character
+    PS1="${PS1}\[\033[0m\] "
+}
