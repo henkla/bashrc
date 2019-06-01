@@ -30,7 +30,7 @@ function info {
 function backup_bash_config() {
 
   target=$REPOSITORIES/bashrc
-  branch="debx270"
+  branch="master"
   date=$(date +%Y-%m-%d)
 
   if [ -z "$target" ]; then
