@@ -8,6 +8,12 @@
 
 # launch whatever program in a new tmux window
 function new() {
+  
+  if  [ -z "$TMUX" ]; then
+    tmux
+#    sleep 2
+  fi
+
   if (( "$#" == 1 )); then	
     command tmux new-window -n ${1^^} $1
     command tmux last-window
