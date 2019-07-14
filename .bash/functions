@@ -6,6 +6,79 @@
 # ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║
 # ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 
+
+
+
+
+# --------------------------------------------------
+
+function _is_repo() {
+
+    if [ -d .git ]; then
+        return 1
+    else
+        git rev-parse --git-dir 2> /dev/null;
+        return 0
+    fi
+}
+
+function _is_clean() {
+
+    if [[ `git status --porcelain` ]]; then
+        return "0"
+    else
+        return "1"
+    fi
+}
+
+#function _get_branch() {
+#
+#
+#}
+
+#function _get_untracked_files() {
+#
+#}
+
+function git_prompt() {
+
+    if [ -d .git ]; then
+        
+        status='clean'
+        branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
+
+        if [ "$_is_clean" == "1" ]; then
+          echo "dirty"
+        fi
+
+        test -n "$branch" && echo branch:$branch "  "status:$status
+        echo -e $(parse_current_dir) 💎 | lolcat 
+        
+    else
+        
+        git rev-parse --git-dir 2> /dev/null;
+        return 0
+    
+    fi
+
+}
+
+# --------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # launch whatever program in a new tmux window
 function new() {
   
@@ -182,6 +255,21 @@ function parse_current_dir() {
 	return 1
 }
 
+function git_is_dirty() {
+
+    if [[ `git status --porcelain` ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+ 
+function git_get_branch_if_repo() {
+
+    branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
+    test -n "$branch" && echo " [$branch]"
+}
+
 function lolcat_prompt() {
     # Make a RAINBOW COLORED bash prompt
     # Requires lolcat and python
@@ -190,7 +278,7 @@ function lolcat_prompt() {
     if [ -z ${LOLCAT_SEED+x} ]; then LOLCAT_SEED=1; else let "LOLCAT_SEED += 1"; fi
     
     # Create the PS1 string
-    PS1=$(echo $(parse_current_dir) \$)
+    PS1=$(echo $(git_get_branch_if_repo) $(parse_current_dir) 💎️)
     # Colorize it
     # lolcat -f forces escape sequences even when lolcat doesn't think they'd matter
     # lolcat -F changes the frequency of the rainbow
@@ -203,4 +291,19 @@ function lolcat_prompt() {
 
     # change the color back to white and add the $/# PS1 character
     PS1="${PS1}\[\033[0m\] "
+}
+
+function git_is_dirty() {
+
+    if [[ `git status --porcelain` ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function git_get_branch_if_repo() {
+
+    branch=`git rev-parse --abbrev-ref HEAD 2>/dev/null`
+    test -n "$branch" && echo "[$branch]"
 }

@@ -29,7 +29,8 @@ alias 1='clear;cd /'
 alias 2='clear;cd $HOME' 
 alias 3='clear;cd $HOME/Skrivbord'
 alias 4='clear;cd $HOME/Hämtningar'
-alias 5='clear; cd $HOME/Utveckling/Repositories'
+alias 5='clear;cd $HOME/Utveckling/Repositories'
+alias 6='clear;cd $HOME/Dokument/Studier'
 
 
 # system
@@ -53,6 +54,7 @@ alias clean=clean.sh
 alias backup=backup_bash_config
 alias sources='sudo $TERM_EDITOR /etc/apt/sources.list'
 alias neofetch='clear;neofetch'
+alias neo='neofetch --off'
 alias svd='clear; echo "# TOP 15 HEADLINES FROM SVD.SE :"; echo "================================="; wget --output-document - --quiet svd.se | grep "h2 class=\"Teaser-heading" | cut -d ">" -f2 | cut -d "<" -f1 | head -n30 | sort -u | uniq | lolcat'
 
 
