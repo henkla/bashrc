@@ -16,6 +16,7 @@ fi
 
 
 # ls
+alias ls='ls -h --group-directories-first'
 alias ll='ls -l'
 alias la='ls -A'
 alias lla='ls -l -A'
@@ -44,6 +45,7 @@ alias rm='rm -i'
 alias update='sudo apt update && apt list --upgradable'
 alias upgrade='sudo apt update && sudo apt upgrade'
 alias install='sudo apt install'
+alias autoremove='sudo apt autoremove'
 alias show='apt show -a'
 alias search='apt search'
 alias mm='wmctrl -k on'
